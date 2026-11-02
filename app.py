@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 # 2. Configure the dashboard
 st.set_page_config(
     page_title="Superstore Sales Dashboard",
@@ -12,8 +11,7 @@ st.set_page_config(
 )
 
 st.title("Superstore Sales Analysis Dashboard")
-st.write("Explore sales and profit performance by year.")
-
+st.write("Explore sales and profit performance by year and customer segment.")
 
 # 3. Load the dataset
 df = pd.read_csv("outputs/cleaned_sales.csv", encoding="latin1")
@@ -39,32 +37,47 @@ if df.empty:
     st.error("No data found between 2014 and 2017.")
     st.stop()
 
-
-# 4. Create the year slicer
+# 4. Create sidebar filters (Year & Customer Segment)
 st.sidebar.header("Dashboard Filters")
 
+# Year Slicer
+year_options = ["All Years", 2014, 2015, 2016, 2017]
 selected_year = st.sidebar.selectbox(
     "Select Year",
-    [2014, 2015, 2016, 2017],
-    index=3
+    year_options,
+    index=0
 )
 
-# Filter data for the selected year
-year_df = df[
-    df["Order Date"].dt.year == selected_year
-].copy()
+# Customer Segment Slicer
+segment_options = ["All Segments"] + sorted(df["Segment"].unique().tolist()) if "Segment" in df.columns else ["All Segments"]
+selected_segment = st.sidebar.selectbox(
+    "Select Customer Segment",
+    segment_options,
+    index=0
+)
+
+# Apply Year Filter
+if selected_year == "All Years":
+    year_df = df.copy()
+    display_title = "Overall Performance - All Years (2014-2017)"
+else:
+    year_df = df[df["Order Date"].dt.year == selected_year].copy()
+    display_title = f"Overall Performance - {selected_year}"
+
+# Apply Segment Filter
+if selected_segment != "All Segments":
+    year_df = year_df[year_df["Segment"] == selected_segment].copy()
+    display_title += f" [{selected_segment}]"
 
 if year_df.empty:
-    st.warning(f"No records found for {selected_year}.")
+    st.warning("No records found for the selected filters.")
     st.stop()
 
-
-# 5. Calculate the overall KPIs for the selected year
+# 5. Calculate the overall KPIs for the selected view
 total_sales = year_df["Sales"].sum()
 total_profit = year_df["Profit"].sum()
 total_orders = year_df["Order ID"].nunique()
 total_customers = year_df["Customer ID"].nunique()
-
 
 # 6. Calculate monthly sales, profit, orders and customers
 year_df["Month_Number"] = year_df["Order Date"].dt.month
@@ -74,146 +87,114 @@ monthly_data = year_df.groupby("Month_Number").agg(
     Profit=("Profit", "sum"),
     Orders=("Order ID", "nunique"),
     Customers=("Customer ID", "nunique")
-)
+).reindex(range(1, 13), fill_value=0)
 
-# Include all 12 months, even if a month has no records
-monthly_data = monthly_data.reindex(
-    range(1, 13), fill_value=0
-)
+# 7. Calculate latest month vs previous month (only applicable for single years)
+if selected_year != "All Years":
+    months_with_data = sorted(year_df["Order Date"].dt.month.unique())
+    latest_month = months_with_data[-1] if months_with_data else 1
+    previous_month = latest_month - 1 if latest_month > 1 else None
 
+    def calculate_change(current, previous):
+        if previous == 0:
+            return None
+        return ((current - previous) / abs(previous)) * 100
 
-# 7. Calculate the latest available month vs previous month
-months_with_data = sorted(
-    year_df["Order Date"].dt.month.unique()
-)
+    if previous_month is not None:
+        sales_change = calculate_change(monthly_data.loc[latest_month, "Sales"], monthly_data.loc[previous_month, "Sales"])
+        profit_change = calculate_change(monthly_data.loc[latest_month, "Profit"], monthly_data.loc[previous_month, "Profit"])
+        orders_change = calculate_change(monthly_data.loc[latest_month, "Orders"], monthly_data.loc[previous_month, "Orders"])
+        customers_change = calculate_change(monthly_data.loc[latest_month, "Customers"], monthly_data.loc[previous_month, "Customers"])
+    else:
+        sales_change = profit_change = orders_change = customers_change = None
 
-latest_month = months_with_data[-1]
-
-if latest_month > 1:
-    previous_month = latest_month - 1
+    caption_text = f"Monthly comparison: {pd.Timestamp(selected_year, latest_month, 1):%B %Y}" + (f" vs {pd.Timestamp(selected_year, previous_month, 1):%B %Y}" if previous_month is not None else " (no earlier month available)")
 else:
-    previous_month = None
-
-
-def calculate_change(current, previous):
-    if previous == 0:
-        return None
-    return ((current - previous) / abs(previous)) * 100
-
+    sales_change = profit_change = orders_change = customers_change = None
+    caption_text = f"Aggregated performance overview for segment: {selected_segment}"
 
 def change_text(change):
     if change is None:
-        return "N/A - previous month has zero value"
+        return "N/A"
     if change > 0:
         return f"📈 {change:.2f}% increase"
     if change < 0:
         return f"📉 {abs(change):.2f}% decrease"
     return "No change"
 
-
-# 8. Display KPI cards in light-coloured compact boxes
-st.subheader(f"Overall Performance - {selected_year}")
-
-st.caption(
-    f"Monthly comparison: "
-    f"{pd.Timestamp(selected_year, latest_month, 1):%B %Y}"
-    + (
-        f" vs {pd.Timestamp(selected_year, previous_month, 1):%B %Y}"
-        if previous_month is not None
-        else " (no earlier month available)"
-    )
-)
+# 8. Display KPI cards in compact, styled boxes with headings above
+st.subheader(display_title)
+st.caption(caption_text)
 
 col1, col2, col3, col4 = st.columns(4)
-
-# Calculate monthly changes
-if previous_month is not None:
-    sales_change = calculate_change(
-        monthly_data.loc[latest_month, "Sales"],
-        monthly_data.loc[previous_month, "Sales"]
-    )
-    profit_change = calculate_change(
-        monthly_data.loc[latest_month, "Profit"],
-        monthly_data.loc[previous_month, "Profit"]
-    )
-    orders_change = calculate_change(
-        monthly_data.loc[latest_month, "Orders"],
-        monthly_data.loc[previous_month, "Orders"]
-    )
-    customers_change = calculate_change(
-        monthly_data.loc[latest_month, "Customers"],
-        monthly_data.loc[previous_month, "Customers"]
-    )
-else:
-    sales_change = None
-    profit_change = None
-    orders_change = None
-    customers_change = None
-
 
 # KPI 1: Sales
 with col1:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC;
-                    padding:10px;border-radius:8px;">
-            <p style="color:#555;margin:0;font-size:14px;">Total Sales</p>
+        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
+            <p style="color:#555; margin:0; font-size:13px;">Total Sales</p>
         """,
         unsafe_allow_html=True
     )
     st.metric("Sales", f"${total_sales:,.2f}", label_visibility="collapsed")
     st.markdown("</div>", unsafe_allow_html=True)
-    st.caption(change_text(sales_change))
-
+    if selected_year != "All Years":
+        st.caption(change_text(sales_change))
+    else:
+        st.caption("Filtered view")
 
 # KPI 2: Profit
 with col2:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC;
-                    padding:10px;border-radius:8px;">
-            <p style="color:#555;margin:0;font-size:14px;">Total Profit</p>
+        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
+            <p style="color:#555; margin:0; font-size:13px;">Total Profit</p>
         """,
         unsafe_allow_html=True
     )
     st.metric("Profit", f"${total_profit:,.2f}", label_visibility="collapsed")
     st.markdown("</div>", unsafe_allow_html=True)
-    st.caption(change_text(profit_change))
-
+    if selected_year != "All Years":
+        st.caption(change_text(profit_change))
+    else:
+        st.caption("Filtered view")
 
 # KPI 3: Orders
 with col3:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC;
-                    padding:10px;border-radius:8px;">
-            <p style="color:#555;margin:0;font-size:14px;">Total Orders</p>
+        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
+            <p style="color:#555; margin:0; font-size:13px;">Total Orders</p>
         """,
         unsafe_allow_html=True
     )
     st.metric("Orders", f"{total_orders:,}", label_visibility="collapsed")
     st.markdown("</div>", unsafe_allow_html=True)
-    st.caption(change_text(orders_change))
-
+    if selected_year != "All Years":
+        st.caption(change_text(orders_change))
+    else:
+        st.caption("Filtered view")
 
 # KPI 4: Customers
 with col4:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC;
-                    padding:10px;border-radius:8px;">
-            <p style="color:#555;margin:0;font-size:14px;">Total Customers</p>
+        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
+            <p style="color:#555; margin:0; font-size:13px;">Total Customers</p>
         """,
         unsafe_allow_html=True
     )
     st.metric("Customers", f"{total_customers:,}", label_visibility="collapsed")
     st.markdown("</div>", unsafe_allow_html=True)
-    st.caption(change_text(customers_change))
+    if selected_year != "All Years":
+        st.caption(change_text(customers_change))
+    else:
+        st.caption("Filtered view")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-
-# 9. Monthly Sales History - Compact Line Chart
+# 9. Monthly Sales History - Compact Line Chart (Heading Above)
 st.subheader("1. Monthly Sales History")
 
 month_names = [
@@ -224,8 +205,7 @@ month_names = [
 
 monthly_sales = monthly_data["Sales"]
 
-fig, ax = plt.subplots(figsize=(10, 3.2))
-
+fig, ax = plt.subplots(figsize=(9, 3.0))
 ax.plot(
     month_names,
     monthly_sales.values,
@@ -234,8 +214,9 @@ ax.plot(
     linewidth=1.8
 )
 
-ax.set_title(f"Monthly Sales Trend - {selected_year}", fontsize=11)
-ax.set_ylabel("Sales ($)", fontsize=9)
+trend_title = f"Monthly Sales Trend ({selected_year} - {selected_segment})"
+ax.set_title(trend_title, fontsize=10)
+ax.set_ylabel("Sales ($)", fontsize=8)
 
 ax.set_xticks(range(12))
 ax.set_xticklabels(month_names, rotation=30, ha="right", fontsize=8)
@@ -247,14 +228,12 @@ fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 
-
-# 10. Sales by Category - Compact Bar Chart
+# 10. Sales by Category - Compact Bar Chart (Heading Above)
 st.subheader("2. Sales by Category")
 
 category_sales = year_df.groupby("Category")["Sales"].sum()
 
-fig, ax = plt.subplots(figsize=(7, 3.2))
-
+fig, ax = plt.subplots(figsize=(7, 3.0))
 bars = ax.bar(category_sales.index, category_sales.values, color="#1f77b4", width=0.55)
 
 for bar in bars:
@@ -267,8 +246,8 @@ for bar in bars:
         ha='center', va='bottom', fontsize=8
     )
 
-ax.set_title(f"Sales by Category - {selected_year}", fontsize=11)
-ax.set_ylabel("Sales ($)", fontsize=9)
+ax.set_title(f"Sales by Category", fontsize=10)
+ax.set_ylabel("Sales ($)", fontsize=8)
 ax.tick_params(axis="x", rotation=0, labelsize=8)
 ax.tick_params(axis='y', labelsize=8)
 
@@ -276,14 +255,12 @@ fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 
-
-# 11. Profit by Category - Compact Bar Chart
+# 11. Profit by Category - Compact Bar Chart (Heading Above)
 st.subheader("3. Profit by Category")
 
 category_profit = year_df.groupby("Category")["Profit"].sum()
 
-fig, ax = plt.subplots(figsize=(7, 3.2))
-
+fig, ax = plt.subplots(figsize=(7, 3.0))
 bars = ax.bar(category_profit.index, category_profit.values, color="#1f77b4", width=0.55)
 
 for bar in bars:
@@ -296,8 +273,8 @@ for bar in bars:
         ha='center', va='bottom', fontsize=8
     )
 
-ax.set_title(f"Profit by Category - {selected_year}", fontsize=11)
-ax.set_ylabel("Profit ($)", fontsize=9)
+ax.set_title(f"Profit by Category", fontsize=10)
+ax.set_ylabel("Profit ($)", fontsize=8)
 ax.tick_params(axis="x", rotation=0, labelsize=8)
 ax.tick_params(axis='y', labelsize=8)
 
@@ -305,14 +282,12 @@ fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 
-
-# 12. Sales by Region - Compact Bar Chart
+# 12. Sales by Region - Compact Bar Chart (Heading Above)
 st.subheader("4. Sales by Region")
 
 region_sales = year_df.groupby("Region")["Sales"].sum()
 
-fig, ax = plt.subplots(figsize=(7, 3.2))
-
+fig, ax = plt.subplots(figsize=(7, 3.0))
 bars = ax.bar(region_sales.index, region_sales.values, color="#1f77b4", width=0.55)
 
 for bar in bars:
@@ -325,15 +300,14 @@ for bar in bars:
         ha='center', va='bottom', fontsize=8
     )
 
-ax.set_title(f"Sales by Region - {selected_year}", fontsize=11)
-ax.set_ylabel("Sales ($)", fontsize=9)
+ax.set_title(f"Sales by Region", fontsize=10)
+ax.set_ylabel("Sales ($)", fontsize=8)
 ax.tick_params(axis="x", rotation=0, labelsize=8)
 ax.tick_params(axis='y', labelsize=8)
 
 fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
-
 
 # 13. Footer
 st.divider()
