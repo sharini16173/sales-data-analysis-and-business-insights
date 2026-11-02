@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 2. Configure the dashboard
+# 2. Configure the dashboard (Wide layout)
 st.set_page_config(
     page_title="Superstore Sales Dashboard",
     page_icon="📊",
@@ -122,7 +122,7 @@ def change_text(change):
         return f"📉 {abs(change):.2f}% decrease"
     return "No change"
 
-# 8. Display KPI cards in compact, styled boxes with headings above
+# 8. Display KPI cards in ultra-compact boxes with headings above
 st.subheader(display_title)
 st.caption(caption_text)
 
@@ -132,8 +132,8 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
-            <p style="color:#555; margin:0; font-size:13px;">Total Sales</p>
+        <div style="background-color:#F5F8FC; padding:8px; border-radius:6px;">
+            <p style="color:#555; margin:0; font-size:12px;">Total Sales</p>
         """,
         unsafe_allow_html=True
     )
@@ -148,8 +148,8 @@ with col1:
 with col2:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
-            <p style="color:#555; margin:0; font-size:13px;">Total Profit</p>
+        <div style="background-color:#F5F8FC; padding:8px; border-radius:6px;">
+            <p style="color:#555; margin:0; font-size:12px;">Total Profit</p>
         """,
         unsafe_allow_html=True
     )
@@ -164,8 +164,8 @@ with col2:
 with col3:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
-            <p style="color:#555; margin:0; font-size:13px;">Total Orders</p>
+        <div style="background-color:#F5F8FC; padding:8px; border-radius:6px;">
+            <p style="color:#555; margin:0; font-size:12px;">Total Orders</p>
         """,
         unsafe_allow_html=True
     )
@@ -180,8 +180,8 @@ with col3:
 with col4:
     st.markdown(
         """
-        <div style="background-color:#F5F8FC; padding:10px; border-radius:8px;">
-            <p style="color:#555; margin:0; font-size:13px;">Total Customers</p>
+        <div style="background-color:#F5F8FC; padding:8px; border-radius:6px;">
+            <p style="color:#555; margin:0; font-size:12px;">Total Customers</p>
         """,
         unsafe_allow_html=True
     )
@@ -194,33 +194,33 @@ with col4:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 9. Monthly Sales History - Compact Line Chart (Heading Above)
+# 9. Monthly Sales History - Ultra-Compact Line Chart
 st.subheader("1. Monthly Sales History")
 
 month_names = [
-    "January", "February", "March", "April",
-    "May", "June", "July", "August",
-    "September", "October", "November", "December"
+    "Jan", "Feb", "Mar", "Apr",
+    "May", "Jun", "Jul", "Aug",
+    "Sep", "Oct", "Nov", "Dec"
 ]
 
 monthly_sales = monthly_data["Sales"]
 
-fig, ax = plt.subplots(figsize=(9, 3.0))
+fig, ax = plt.subplots(figsize=(8, 2.2))
 ax.plot(
     month_names,
     monthly_sales.values,
     marker="o",
     color="#1f77b4",
-    linewidth=1.8
+    linewidth=1.5,
+    markersize=4
 )
 
-trend_title = f"Monthly Sales Trend ({selected_year} - {selected_segment})"
-ax.set_title(trend_title, fontsize=10)
-ax.set_ylabel("Sales ($)", fontsize=8)
+ax.set_title(f"Monthly Sales Trend", fontsize=9)
+ax.set_ylabel("Sales ($)", fontsize=7)
 
 ax.set_xticks(range(12))
-ax.set_xticklabels(month_names, rotation=30, ha="right", fontsize=8)
-ax.tick_params(axis='y', labelsize=8)
+ax.set_xticklabels(month_names, fontsize=7)
+ax.tick_params(axis='y', labelsize=7)
 
 ax.grid(axis="y", linestyle="--", alpha=0.3)
 fig.tight_layout()
@@ -228,91 +228,89 @@ fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 
-# 10. Sales by Category - Compact Bar Chart (Heading Above)
-st.subheader("2. Sales by Category")
+# 10, 11, 12. Category and Region Charts arranged in side-by-side columns to save vertical height
+col_a, col_b = st.columns(2)
 
-category_sales = year_df.groupby("Category")["Sales"].sum()
+with col_a:
+    # Sales by Category
+    st.subheader("2. Sales by Category")
+    category_sales = year_df.groupby("Category")["Sales"].sum()
 
-fig, ax = plt.subplots(figsize=(7, 3.0))
-bars = ax.bar(category_sales.index, category_sales.values, color="#1f77b4", width=0.55)
+    fig, ax = plt.subplots(figsize=(5, 2.2))
+    bars = ax.bar(category_sales.index, category_sales.values, color="#1f77b4", width=0.5)
 
-for bar in bars:
-    height = bar.get_height()
-    ax.annotate(
-        f"${height:,.0f}",
-        xy=(bar.get_x() + bar.get_width() / 2, height),
-        xytext=(0, 2),
-        textcoords="offset points",
-        ha='center', va='bottom', fontsize=8
-    )
+    for bar in bars:
+        height = bar.get_height()
+        ax.annotate(
+            f"${height:,.0f}",
+            xy=(bar.get_x() + bar.get_width() / 2, height),
+            xytext=(0, 2),
+            textcoords="offset points",
+            ha='center', va='bottom', fontsize=7
+        )
 
-ax.set_title(f"Sales by Category", fontsize=10)
-ax.set_ylabel("Sales ($)", fontsize=8)
-ax.tick_params(axis="x", rotation=0, labelsize=8)
-ax.tick_params(axis='y', labelsize=8)
+    ax.set_title("Sales by Category", fontsize=9)
+    ax.set_ylabel("Sales ($)", fontsize=7)
+    ax.tick_params(axis="x", rotation=0, labelsize=7)
+    ax.tick_params(axis='y', labelsize=7)
 
-fig.tight_layout()
-st.pyplot(fig)
-plt.close(fig)
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
-# 11. Profit by Category - Compact Bar Chart (Heading Above)
-st.subheader("3. Profit by Category")
+    # Sales by Region
+    st.subheader("4. Sales by Region")
+    region_sales = year_df.groupby("Region")["Sales"].sum()
 
-category_profit = year_df.groupby("Category")["Profit"].sum()
+    fig, ax = plt.subplots(figsize=(5, 2.2))
+    bars = ax.bar(region_sales.index, region_sales.values, color="#1f77b4", width=0.5)
 
-fig, ax = plt.subplots(figsize=(7, 3.0))
-bars = ax.bar(category_profit.index, category_profit.values, color="#1f77b4", width=0.55)
+    for bar in bars:
+        height = bar.get_height()
+        ax.annotate(
+            f"${height:,.0f}",
+            xy=(bar.get_x() + bar.get_width() / 2, height),
+            xytext=(0, 2),
+            textcoords="offset points",
+            ha='center', va='bottom', fontsize=7
+        )
 
-for bar in bars:
-    height = bar.get_height()
-    ax.annotate(
-        f"${height:,.0f}",
-        xy=(bar.get_x() + bar.get_width() / 2, height),
-        xytext=(0, 2),
-        textcoords="offset points",
-        ha='center', va='bottom', fontsize=8
-    )
+    ax.set_title("Sales by Region", fontsize=9)
+    ax.set_ylabel("Sales ($)", fontsize=7)
+    ax.tick_params(axis="x", rotation=15, labelsize=7)
+    ax.tick_params(axis='y', labelsize=7)
 
-ax.set_title(f"Profit by Category", fontsize=10)
-ax.set_ylabel("Profit ($)", fontsize=8)
-ax.tick_params(axis="x", rotation=0, labelsize=8)
-ax.tick_params(axis='y', labelsize=8)
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
-fig.tight_layout()
-st.pyplot(fig)
-plt.close(fig)
+with col_b:
+    # Profit by Category
+    st.subheader("3. Profit by Category")
+    category_profit = year_df.groupby("Category")["Profit"].sum()
 
-# 12. Sales by Region - Compact Bar Chart (Heading Above)
-st.subheader("4. Sales by Region")
+    fig, ax = plt.subplots(figsize=(5, 2.2))
+    bars = ax.bar(category_profit.index, category_profit.values, color="#1f77b4", width=0.5)
 
-region_sales = year_df.groupby("Region")["Sales"].sum()
+    for bar in bars:
+        height = bar.get_height()
+        ax.annotate(
+            f"${height:,.0f}",
+            xy=(bar.get_x() + bar.get_width() / 2, height),
+            xytext=(0, 2),
+            textcoords="offset points",
+            ha='center', va='bottom', fontsize=7
+        )
 
-fig, ax = plt.subplots(figsize=(7, 3.0))
-bars = ax.bar(region_sales.index, region_sales.values, color="#1f77b4", width=0.55)
+    ax.set_title("Profit by Category", fontsize=9)
+    ax.set_ylabel("Profit ($)", fontsize=7)
+    ax.tick_params(axis="x", rotation=0, labelsize=7)
+    ax.tick_params(axis='y', labelsize=7)
 
-for bar in bars:
-    height = bar.get_height()
-    ax.annotate(
-        f"${height:,.0f}",
-        xy=(bar.get_x() + bar.get_width() / 2, height),
-        xytext=(0, 2),
-        textcoords="offset points",
-        ha='center', va='bottom', fontsize=8
-    )
-
-ax.set_title(f"Sales by Region", fontsize=10)
-ax.set_ylabel("Sales ($)", fontsize=8)
-ax.tick_params(axis="x", rotation=0, labelsize=8)
-ax.tick_params(axis='y', labelsize=8)
-
-fig.tight_layout()
-st.pyplot(fig)
-plt.close(fig)
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
 # 13. Footer
 st.divider()
-
-st.caption(
-    "Built with Python, Pandas, Matplotlib, "
-    "and Streamlit."
-)
+st.caption("Built with Python, Pandas, Matplotlib, and Streamlit.")
