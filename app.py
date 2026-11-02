@@ -15,7 +15,7 @@ st.title("Superstore Sales Analysis Dashboard")
 st.write("Explore sales and profit performance by year.")
 
 
-# 3. Load the dataset (Pointing to your outputs folder)
+# 3. Load the dataset (Updated path to match your folder structure)
 df = pd.read_csv("outputs/cleaned_sales.csv", encoding="latin1")
 
 # Clean column names
@@ -251,25 +251,14 @@ plt.close(fig)
 st.divider()
 
 
-# 10. Sales by Category - Matplotlib (Uniform Blue Bar Chart with Rounded Labels)
+# 10. Sales by Category - Matplotlib (Uniform Blue Bar Chart)
 st.subheader("2. Sales by Category")
 
 category_sales = year_df.groupby("Category")["Sales"].sum()
 
 fig, ax = plt.subplots(figsize=(8, 4))
 
-bars = ax.bar(category_sales.index, category_sales.values, color="#1f77b4")
-
-# Loop to display rounded values on top of bars
-for bar in bars:
-    height = bar.get_height()
-    ax.annotate(
-        f"${height:,.0f}",
-        xy=(bar.get_x() + bar.get_width() / 2, height),
-        xytext=(0, 3),
-        textcoords="offset points",
-        ha='center', va='bottom', fontsize=9
-    )
+category_sales.plot(kind="bar", ax=ax, color="#1f77b4")
 
 ax.set_title(f"Sales by Category - {selected_year}")
 ax.set_xlabel("Category")
@@ -284,25 +273,14 @@ plt.close(fig)
 st.divider()
 
 
-# 11. Profit by Category - Matplotlib (Uniform Blue Bar Chart with Rounded Labels)
+# 11. Profit by Category - Matplotlib (Uniform Blue Bar Chart)
 st.subheader("3. Profit by Category")
 
 category_profit = year_df.groupby("Category")["Profit"].sum()
 
 fig, ax = plt.subplots(figsize=(8, 4))
 
-bars = ax.bar(category_profit.index, category_profit.values, color="#1f77b4")
-
-# Loop to display rounded values on top of bars
-for bar in bars:
-    height = bar.get_height()
-    ax.annotate(
-        f"${height:,.0f}",
-        xy=(bar.get_x() + bar.get_width() / 2, height),
-        xytext=(0, 3),
-        textcoords="offset points",
-        ha='center', va='bottom', fontsize=9
-    )
+category_profit.plot(kind="bar", ax=ax, color="#1f77b4")
 
 ax.set_title(f"Profit by Category - {selected_year}")
 ax.set_xlabel("Category")
@@ -317,25 +295,14 @@ plt.close(fig)
 st.divider()
 
 
-# 12. Sales by Region - Matplotlib (Uniform Blue Bar Chart with Rounded Labels)
+# 12. Sales by Region - Matplotlib (Uniform Blue Bar Chart - Plotly Removed)
 st.subheader("4. Sales by Region")
 
 region_sales = year_df.groupby("Region")["Sales"].sum()
 
 fig, ax = plt.subplots(figsize=(8, 4))
 
-bars = ax.bar(region_sales.index, region_sales.values, color="#1f77b4")
-
-# Loop to display rounded values on top of bars
-for bar in bars:
-    height = bar.get_height()
-    ax.annotate(
-        f"${height:,.0f}",
-        xy=(bar.get_x() + bar.get_width() / 2, height),
-        xytext=(0, 3),
-        textcoords="offset points",
-        ha='center', va='bottom', fontsize=9
-    )
+region_sales.plot(kind="bar", ax=ax, color="#1f77b4")
 
 ax.set_title(f"Sales by Region - {selected_year}")
 ax.set_xlabel("Region")
