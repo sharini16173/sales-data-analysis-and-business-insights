@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 st.title("Superstore Sales Analysis Dashboard")
-st.write("Explore sales and profit performance by year and customer segment.")
+st.write("Explore sales and profit performance by year.")
 
 # 3. Load the dataset
 df = pd.read_csv("outputs/cleaned_sales.csv", encoding="latin1")
@@ -37,22 +37,13 @@ if df.empty:
     st.error("No data found between 2014 and 2017.")
     st.stop()
 
-# 4. Create sidebar filters (Year & Customer Segment)
+# 4. Create sidebar filter (Year Slicer only)
 st.sidebar.header("Dashboard Filters")
 
-# Year Slicer
 year_options = ["All Years", 2014, 2015, 2016, 2017]
 selected_year = st.sidebar.selectbox(
     "Select Year",
     year_options,
-    index=0
-)
-
-# Customer Segment Slicer
-segment_options = ["All Segments"] + sorted(df["Segment"].unique().tolist()) if "Segment" in df.columns else ["All Segments"]
-selected_segment = st.sidebar.selectbox(
-    "Select Customer Segment",
-    segment_options,
     index=0
 )
 
@@ -64,13 +55,8 @@ else:
     year_df = df[df["Order Date"].dt.year == selected_year].copy()
     display_title = f"Overall Performance - {selected_year}"
 
-# Apply Segment Filter
-if selected_segment != "All Segments":
-    year_df = year_df[year_df["Segment"] == selected_segment].copy()
-    display_title += f" [{selected_segment}]"
-
 if year_df.empty:
-    st.warning("No records found for the selected filters.")
+    st.warning("No records found for the selected year.")
     st.stop()
 
 # 5. Calculate the overall KPIs for the selected view
@@ -111,7 +97,7 @@ if selected_year != "All Years":
     caption_text = f"Monthly comparison: {pd.Timestamp(selected_year, latest_month, 1):%B %Y}" + (f" vs {pd.Timestamp(selected_year, previous_month, 1):%B %Y}" if previous_month is not None else " (no earlier month available)")
 else:
     sales_change = profit_change = orders_change = customers_change = None
-    caption_text = f"Aggregated performance overview for segment: {selected_segment}"
+    caption_text = "Aggregated performance overview across all years (2014-2017)"
 
 def change_text(change):
     if change is None:
@@ -141,8 +127,6 @@ with col1:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(sales_change))
-    else:
-        st.caption("Filtered view")
 
 # KPI 2: Profit
 with col2:
@@ -157,8 +141,6 @@ with col2:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(profit_change))
-    else:
-        st.caption("Filtered view")
 
 # KPI 3: Orders
 with col3:
@@ -173,8 +155,6 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(orders_change))
-    else:
-        st.caption("Filtered view")
 
 # KPI 4: Customers
 with col4:
@@ -189,8 +169,6 @@ with col4:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(customers_change))
-    else:
-        st.caption("Filtered view")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -239,7 +217,6 @@ with col_a:
     fig, ax = plt.subplots(figsize=(5, 2.4))
     bars = ax.bar(category_sales.index, category_sales.values, color="#1f77b4", width=0.5)
 
-    # Add headroom padding so labels don't get cut off
     ax.set_ylim(0, category_sales.max() * 1.20)
 
     for bar in bars:
@@ -268,7 +245,6 @@ with col_a:
     fig, ax = plt.subplots(figsize=(5, 2.4))
     bars = ax.bar(region_sales.index, region_sales.values, color="#1f77b4", width=0.5)
 
-    # Add headroom padding
     ax.set_ylim(0, region_sales.max() * 1.20)
 
     for bar in bars:
@@ -295,18 +271,16 @@ with col_b:
     st.subheader("3. Profit by Category")
     category_profit = year_df.groupby("Category")["Profit"].sum()
 
+    max_p = category_profit.max()
+    min_p = min(0, category_profit.min())
+    
     fig, ax = plt.subplots(figsize=(5, 2.4))
     bars = ax.bar(category_profit.index, category_profit.values, color="#1f77b4", width=0.5)
 
-    # Add headroom padding (handling potential negative values safely)
-    max_p = category_profit.max()
-    min_p = min(0, category_profit.min())
     ax.set_ylim(min_p * 1.1, max_p * 1.25)
 
     for bar in bars:
         height = bar.get_height()
-        # Position label above positive bars or below negative bars cleanly
-        y_pos = height if height >= 0 else 0
         ax.annotate(
             f"${height:,.0f}",
             xy=(bar.get_x() + bar.get_width() / 2, height),
