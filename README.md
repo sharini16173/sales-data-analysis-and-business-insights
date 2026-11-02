@@ -11,26 +11,26 @@ Retail businesses often generate massive sales numbers, but high revenue can eas
 ---
 
 ## 📊 Executive Insights
+
 After exploring the data, here are the most impactful discoveries:
 
 * **The 30% Discount Trap:** The data clearly shows that offering a discount of 30% or higher always results in a financial loss for the company. High discounts are erasing the profits.
-* **High Sales but Low Profit in Furniture:** The Furniture category brings in a massive amount of revenue ($742,000) but keeps almost none of it. Its profit margin is a critically low 2.49%, compared to Technology which sits at a healthy 17.40%.
-* **Specific Money-Losing Products:** Diving deeper into the categories reveals that two specific sub-categories—**Tables** (lost $17,725) and **Bookcases** (lost $3,472)—are actively draining the store's overall profits.
+* **High Sales but Low Profit in Furniture:** The Furniture category brings in a massive amount of revenue (\$742,000) but keeps almost none of it. Its profit margin is a critically low 2.49%, compared to Technology which sits at a healthy 17.40%.
+* **Specific Money-Losing Products:** Diving deeper into the categories reveals that two specific sub-categories—**Tables** (lost \$17,725) and **Bookcases** (lost \$3,472)—are actively draining the store's overall profits.
 * **End-of-Year Sales Rush:** Customer buying patterns show strong seasonality. Sales consistently spike in the last few months of the year, with September, November, and December bringing in the highest revenue.
-
+ 
 ---
-
 ## 💡 Actionable Recommendations
 Based on the data, here are strategic solutions to optimize margins and stop profit leaks:
 
 * **Cap Discounts at 20%:** Immediately stop offering discounts of 30% or more. Setting a strict maximum discount limit of 20% will protect baseline profits and stop the company from losing money on sales.
 * **Fix the Furniture Strategy:** Management needs to investigate the hidden costs (like shipping and storage) for Tables and Bookcases. If they cannot be made profitable, the store should consider dropping these items and focusing on high-margin office supplies instead.
 * **Prepare for the Q4 Holiday Season:** Since September through December are the busiest months, the company should secure inventory early and focus their marketing budgets entirely on these high-performing months to maximize revenue.
-
+  
 ---
-
 ## 🛠️ Dashboard Features & Tech Stack
 Built to translate static findings into an interactive tool for stakeholders:
+
 * **Executive KPIs:** Real-time visibility into Total Sales, Total Profit, Total Orders, and Total Customers.
 * **Dynamic Year Slicer:** Filter all metrics and charts instantly across **2014–2017** or view an **All Years** aggregated summary.
 * **Visualizations:** Clean, uniform Matplotlib charts tracking monthly trends, category breakdowns, and regional performance.
