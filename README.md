@@ -242,3 +242,5 @@ Aspiring Data Analyst
 - **LinkedIn:** www.linkedin.com/in/sharini-g-571546382
 - **GitHub:** https://github.com/sharini16173
 - **Email:**  g.sharini1601@gmail.com
+### Project Status
+Project completed – continuously improving my analytical skills.
