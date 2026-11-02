@@ -51,7 +51,7 @@ Based on the data, here are strategic solutions to optimize margins and stop pro
 ## 🚀 How to View or Run the Project
 
 **👁️ To view the analysis (No installation required):**
-* Click on the `Superstore_Sales_2.ipynb` file in this repository. GitHub will automatically open and display the code, charts, and analysis directly in your web browser.
+* Click on the `Superstore_Sales.ipynb` file in this repository. GitHub will automatically open and display the code, charts, and analysis directly in your web browser.
 
 **💻 To run the code locally on your machine:**
 Copy and paste the following commands into your terminal or command prompt to run all steps at once:
