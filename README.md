@@ -3,21 +3,29 @@
 ## 🎯 Business Objective
 Retail businesses often see high sales numbers, but those numbers can hide areas where the company is actually losing money. The objective of this project is to analyze four years of Superstore retail data to identify profit leaks and margin erosion. By finding out exactly which products and discounting strategies are hurting the business, this project provides data-driven advice to help management stop financial losses and grow net profits.
 
-## 🛠️ Tech Stack & Methodology
+## 📂 Dataset Description
+* **Source:** Sample Superstore Dataset (Loaded from `Sample - Superstore.csv`)
+* **Size:** 9,994 rows × 21 columns
+* **Key Columns Analyzed:**
+  * `Order Date` & `Ship Date`: Used to track monthly revenue trends and seasonality.
+  * `Customer Name` & `Segment`: Buyer classifications (Consumer, Corporate, Home Office).
+  * `Category` & `Sub-Category`: Product types (Furniture, Office Supplies, Technology).
+  * `Sales`, `Quantity`, `Discount`, & `Profit`: The core financial metrics used to calculate margins and find money-losing orders.
+    
+## 🛠️ Tools and Libraries Used
+* **Programming Language:** Python 3
+* **Data Manipulation & Cleaning:** Pandas, NumPy
+* **Data Visualization:** Matplotlib, Seaborn
+* **Environment:** Jupyter Notebook
+* **Export & Reporting:** Openpyxl (for exporting final insights to Excel)
+* **Version Control:** Git & GitHub
 
-**Toolkit Used:**
-* **Python:** The main programming language used for the analysis.
-* **Pandas & NumPy:** Used to clean, filter, and group the data.
-* **Matplotlib & Seaborn:** Used to create simple, easy-to-read charts.
-* **SQLite / DB Browser:** Used to manage and query the local data files.
-* **Jupyter Notebook:** The environment used to write and run the code.
-* **GitHub:** Used for version control and sharing the project.
-
-**Methodology (Data Cleaning Steps):**
-1. **Formatting Headers:** Cleaned up column names so they are easy to read and code with.
-2. **Fixing Dates:** Changed text-based order and shipping dates into proper calendar date formats to allow for month-by-month tracking.
-3. **Creating New Features:** Added helpful new columns like Year, Month, Shipping Days, and a Profit Status tag to easily separate profitable orders from losing ones.
-4. **Quality Check:** Confirmed there were no missing, blank, or invalid values in the dataset.
+## 🧹 Data Cleaning and Preparations
+Before searching for business trends, the raw data was cleaned and structured for accurate analysis:
+1. **Standardized Column Names:** Stripped extra whitespace from headers to ensure clean, error-free coding.
+2. **Date Formatting:** Converted text-based `Order Date` and `Ship Date` into proper Python datetime objects to enable month-by-month trend tracking.
+3. **Feature Engineering:** Created new helpful columns like `Year`, `Month`, `Shipping Days`, and a `Profit Status` tag (categorizing every single order as either a "Profit" or a "Loss").
+4. **Data Quality Checks:** Confirmed there were no missing values or duplicated rows, ensuring the financial aggregates were 100% accurate.
 
 ## 📊 Executive Insights
 After exploring the data, here are the most impactful discoveries:
