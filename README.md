@@ -64,9 +64,5 @@ git clone [https://github.com/your-username/superstore-sales-analysis.git](https
 pip install pandas matplotlib seaborn openpyxl
 
 # 3. Launch Jupyter Notebook to interact with the data
-jupyter notebook Superstore_Sales_2.ipynb
-   ```
-3. Open the Jupyter Notebook to view the code, charts, and analysis:
-   ```bash
-   jupyter notebook Superstore_Sales.ipynb
+jupyter notebook Superstore_Sales.ipynb
    ```
