@@ -70,7 +70,7 @@ pip install pandas matplotlib seaborn openpyxl
 jupyter notebook Superstore_Sales.ipynb
 ```
 
-##  Contact & Professional Links
+##  Author & Proffesional Links
 
 **Sharini G**  
 Aspiring Data Analyst
