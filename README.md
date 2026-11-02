@@ -17,6 +17,19 @@ Retail businesses often generate massive sales numbers, but high revenue can eas
   * `Sales`, `Quantity`, `Discount`, & `Profit`: The core financial metrics used to calculate margins and find money-losing orders.
 
 ---
+## 📂 Project Structure
+```text
+Sales_Data_Analysis/
+│
+├── outputs/
+│   └── cleaned_sales.csv      # Cleaned and processed dataset
+├── images/
+│   └── dashboard_preview.png  # Screenshot for README
+├── app.py                     # Main Streamlit application script
+├── requirements.txt           # Required Python packages
+└── README.md                  # Project documentation
+
+---
 ## 🛠️ Tools and Libraries Used
 * **Programming Language:** Python 3
 * **Data Manipulation & Cleaning:** Pandas, NumPy
