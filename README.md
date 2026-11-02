@@ -5,6 +5,20 @@
 ## 📋 Executive Summary / Overview
 Retail businesses often generate massive sales numbers, but high revenue can easily hide areas where the company is actually losing money. This project analyzes four years of sales data from a national Superstore to uncover the root causes of profit erosion. Using Python (Pandas and Matplotlib), the analysis proves that aggressive discounting strategies and underperforming furniture products are actively hurting the bottom line. The resulting insights provide clear, data-driven recommendations to help management stop financial losses and maximize net profits.
 
+## 📂 Project Structure
+
+```text
+Sales_Data_Analysis/
+│
+├── outputs/
+│   └── cleaned_sales.csv      # Cleaned and processed dataset
+├── images/
+│   └── dashboard_preview.png  # Screenshot for README preview
+├── app.py                     # Main Streamlit application script
+├── requirements.txt           # Required Python packages
+└── README.md                  # Project documentation
+```
+
 ## 🚀 Live Demo & Preview
 🌐 **Live App:** [View Live Streamlit Dashboard](https://sales-data-analysis-and-business-insights-5yjtsyxwqypgfaxl5hgx.streamlit.app/)
 
