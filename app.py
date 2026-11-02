@@ -205,7 +205,7 @@ month_names = [
 
 monthly_sales = monthly_data["Sales"]
 
-fig, ax = plt.subplots(figsize=(8, 2.2))
+fig, ax = plt.subplots(figsize=(8, 2.4))
 ax.plot(
     month_names,
     monthly_sales.values,
@@ -215,7 +215,7 @@ ax.plot(
     markersize=4
 )
 
-ax.set_title(f"Monthly Sales Trend", fontsize=9)
+ax.set_title("Monthly Sales Trend", fontsize=9)
 ax.set_ylabel("Sales ($)", fontsize=7)
 
 ax.set_xticks(range(12))
@@ -228,7 +228,7 @@ fig.tight_layout()
 st.pyplot(fig)
 plt.close(fig)
 
-# 10, 11, 12. Category and Region Charts arranged in side-by-side columns to save vertical height
+# 10, 11, 12. Category and Region Charts arranged in side-by-side columns
 col_a, col_b = st.columns(2)
 
 with col_a:
@@ -236,15 +236,18 @@ with col_a:
     st.subheader("2. Sales by Category")
     category_sales = year_df.groupby("Category")["Sales"].sum()
 
-    fig, ax = plt.subplots(figsize=(5, 2.2))
+    fig, ax = plt.subplots(figsize=(5, 2.4))
     bars = ax.bar(category_sales.index, category_sales.values, color="#1f77b4", width=0.5)
+
+    # Add headroom padding so labels don't get cut off
+    ax.set_ylim(0, category_sales.max() * 1.20)
 
     for bar in bars:
         height = bar.get_height()
         ax.annotate(
             f"${height:,.0f}",
             xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 2),
+            xytext=(0, 3),
             textcoords="offset points",
             ha='center', va='bottom', fontsize=7
         )
@@ -262,15 +265,18 @@ with col_a:
     st.subheader("4. Sales by Region")
     region_sales = year_df.groupby("Region")["Sales"].sum()
 
-    fig, ax = plt.subplots(figsize=(5, 2.2))
+    fig, ax = plt.subplots(figsize=(5, 2.4))
     bars = ax.bar(region_sales.index, region_sales.values, color="#1f77b4", width=0.5)
+
+    # Add headroom padding
+    ax.set_ylim(0, region_sales.max() * 1.20)
 
     for bar in bars:
         height = bar.get_height()
         ax.annotate(
             f"${height:,.0f}",
             xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 2),
+            xytext=(0, 3),
             textcoords="offset points",
             ha='center', va='bottom', fontsize=7
         )
@@ -289,17 +295,24 @@ with col_b:
     st.subheader("3. Profit by Category")
     category_profit = year_df.groupby("Category")["Profit"].sum()
 
-    fig, ax = plt.subplots(figsize=(5, 2.2))
+    fig, ax = plt.subplots(figsize=(5, 2.4))
     bars = ax.bar(category_profit.index, category_profit.values, color="#1f77b4", width=0.5)
+
+    # Add headroom padding (handling potential negative values safely)
+    max_p = category_profit.max()
+    min_p = min(0, category_profit.min())
+    ax.set_ylim(min_p * 1.1, max_p * 1.25)
 
     for bar in bars:
         height = bar.get_height()
+        # Position label above positive bars or below negative bars cleanly
+        y_pos = height if height >= 0 else 0
         ax.annotate(
             f"${height:,.0f}",
             xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 2),
+            xytext=(0, 3 if height >= 0 else -10),
             textcoords="offset points",
-            ha='center', va='bottom', fontsize=7
+            ha='center', va='bottom' if height >= 0 else 'top', fontsize=7
         )
 
     ax.set_title("Profit by Category", fontsize=9)
