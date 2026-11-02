@@ -69,3 +69,11 @@ pip install pandas matplotlib seaborn openpyxl
 # 3. Launch Jupyter Notebook to interact with the data
 jupyter notebook Superstore_Sales.ipynb
 
+##  Contact & Professional Links
+
+**Sharini G**  
+Aspiring Data Analyst
+
+- **LinkedIn:** www.linkedin.com/in/sharini-g-571546382
+- **GitHub:** https://github.com/sharini16173
+- **Email:**  g.sharini1601@gmail.com
