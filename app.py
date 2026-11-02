@@ -127,6 +127,8 @@ with col1:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(sales_change))
+    else:
+        st.caption("All-time aggregate (2014-2017)")
 
 # KPI 2: Profit
 with col2:
@@ -141,6 +143,8 @@ with col2:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(profit_change))
+    else:
+        st.caption("All-time aggregate (2014-2017)")
 
 # KPI 3: Orders
 with col3:
@@ -155,6 +159,8 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(orders_change))
+    else:
+        st.caption("All-time aggregate (2014-2017)")
 
 # KPI 4: Customers
 with col4:
@@ -169,6 +175,8 @@ with col4:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(customers_change))
+    else:
+        st.caption("All-time aggregate (2014-2017)")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
