@@ -1,7 +1,6 @@
 # 1. Import libraries
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.express as px
 
 
@@ -85,13 +84,11 @@ total_customers = year_df["Customer ID"].nunique()
 year_df["Month_Year"] = year_df["Order Date"].dt.to_period("M")
 
 if selected_year == "All":
-    # Group by full Month-Year for the "All" timeline chart
     trend_data = year_df.groupby("Month_Year").agg(
         Sales=("Sales", "sum")
     ).reset_index()
     trend_data["Month_Year"] = trend_data["Month_Year"].astype(str)
 else:
-    # Group by month number for single-year view
     year_df["Month_Number"] = year_df["Order Date"].dt.month
     monthly_data = year_df.groupby("Month_Number").agg(
         Sales=("Sales", "sum"),
@@ -100,7 +97,6 @@ else:
         Customers=("Customer ID", "nunique")
     ).reindex(range(1, 13), fill_value=0)
     
-    # Latest month vs previous month calculation for single year view
     months_with_data = sorted(year_df["Order Date"].dt.month.unique())
     latest_month = months_with_data[-1] if months_with_data else 1
     previous_month = latest_month - 1 if latest_month > 1 else None
@@ -114,7 +110,7 @@ def calculate_change(current, previous):
 
 def change_text(change):
     if change is None:
-        return "N/A"
+        return ""
     if change > 0:
         return f"📈 +{change:.1f}% vs prev"
     if change < 0:
@@ -141,12 +137,13 @@ else:
     sales_change = profit_change = orders_change = customers_change = None
 
 def render_kpi_card(title, value, change_val):
+    subtext = change_text(change_val) if (selected_year != "All" and change_val is not None) else ""
     st.markdown(
         f"""
         <div style="background-color:#F8FAFC; padding:8px 12px; border-radius:6px; border: 1px solid #E2E8F0;">
             <p style="color:#64748B; font-size:11px !important; margin:0 0 2px 0; font-weight:500;">{title}</p>
             <h3 style="color:#0F172A; font-size:18px !important; margin:0 0 2px 0;">{value}</h3>
-            <p style="font-size:10px !important; color:#475569; margin:0;">{change_text(change_val) if change_val is not None else "Active Filter View"}</p>
+            <p style="font-size:10px !important; color:#475569; margin:0;">{subtext}</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -165,95 +162,90 @@ with col4:
 st.divider()
 
 
-# 9. Sales History Chart (Adjusted for "All" vs Single Year)
+# 9. Sales Trend Analysis (Line Chart)
 st.subheader("1. Sales Trend Analysis")
 
-fig, ax = plt.subplots(figsize=(10, 2.5))
-
 if selected_year == "All":
-    ax.plot(
-        trend_data["Month_Year"],
-        trend_data["Sales"],
-        marker="o",
-        linewidth=1.5,
-        color="#2563EB"
-    )
-    ax.set_xticks(range(0, len(trend_data), max(1, len(trend_data)//10))) # Thin out ticks for readability
-    plt.xticks(rotation=30, ha="right", fontsize=8)
+    fig_trend = px.line(trend_data, x="Month_Year", y="Sales", markers=True)
 else:
     month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    ax.plot(
-        month_names,
-        monthly_data["Sales"].values,
-        marker="o",
-        linewidth=1.5,
-        color="#2563EB"
-    )
-    ax.set_xticks(range(12))
-    ax.set_xticklabels(month_names, fontsize=8)
+    monthly_sales_df = pd.DataFrame({"Month": month_names, "Sales": monthly_data["Sales"].values})
+    fig_trend = px.line(monthly_sales_df, x="Month", y="Sales", markers=True)
 
-ax.set_ylabel("Sales ($)", fontsize=9)
-ax.grid(axis="y", linestyle="--", alpha=0.3)
-ax.tick_params(axis="y", labelsize=8)
-fig.tight_layout()
-
-st.pyplot(fig)
-plt.close(fig)
+fig_trend.update_traces(line_color="#2563EB")
+fig_trend.update_layout(
+    height=260,
+    margin=dict(l=10, r=10, t=10, b=10),
+    xaxis_title="",
+    yaxis_title="Sales ($)",
+    font=dict(size=10)
+)
+st.plotly_chart(fig_trend, use_container_width=True)
 
 
 st.divider()
 
 
-# 10 & 11. Side-by-Side Layout for Category Sales & Profit Charts (Compact size)
+# 10 & 11. Side-by-Side Layout for Category Sales & Profit Charts (Interactive Hover with uniform blue color)
 col_chart1, col_chart2 = st.columns(2)
 
 with col_chart1:
     st.subheader("2. Sales by Category")
-    category_sales = year_df.groupby("Category")["Sales"].sum()
+    category_sales = year_df.groupby("Category", as_index=False)["Sales"].sum()
 
-    fig, ax = plt.subplots(figsize=(5, 2.5))
-    category_sales.plot(kind="bar", ax=ax, color="#60A5FA")
-    ax.set_ylabel("Sales ($)", fontsize=9)
-    ax.tick_params(axis="x", rotation=0, labelsize=8)
-    ax.tick_params(axis="y", labelsize=8)
-    ax.grid(axis="y", linestyle="--", alpha=0.3)
-    fig.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
+    fig_cat_sales = px.bar(
+        category_sales,
+        x="Category",
+        y="Sales"
+    )
+    fig_cat_sales.update_traces(marker_color="#2563EB")
+    fig_cat_sales.update_layout(
+        height=240,
+        margin=dict(l=10, r=10, t=10, b=10),
+        xaxis_title="",
+        yaxis_title="Sales ($)",
+        font=dict(size=10)
+    )
+    st.plotly_chart(fig_cat_sales, use_container_width=True)
 
 with col_chart2:
     st.subheader("3. Profit by Category")
-    category_profit = year_df.groupby("Category")["Profit"].sum()
+    category_profit = year_df.groupby("Category", as_index=False)["Profit"].sum()
 
-    fig, ax = plt.subplots(figsize=(5, 2.5))
-    category_profit.plot(kind="bar", ax=ax, color="#34D399")
-    ax.set_ylabel("Profit ($)", fontsize=9)
-    ax.tick_params(axis="x", rotation=0, labelsize=8)
-    ax.tick_params(axis="y", labelsize=8)
-    ax.grid(axis="y", linestyle="--", alpha=0.3)
-    fig.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
+    fig_cat_profit = px.bar(
+        category_profit,
+        x="Category",
+        y="Profit"
+    )
+    fig_cat_profit.update_traces(marker_color="#2563EB")
+    fig_cat_profit.update_layout(
+        height=240,
+        margin=dict(l=10, r=10, t=10, b=10),
+        xaxis_title="",
+        yaxis_title="Profit ($)",
+        font=dict(size=10)
+    )
+    st.plotly_chart(fig_cat_profit, use_container_width=True)
 
 
 st.divider()
 
 
-# 12. Sales by Region - Plotly Express
+# 12. Sales by Region - Plotly Bar Chart (No permanent labels, uniform blue color, hover to see values)
 st.subheader("4. Sales by Region")
 
 region_sales = year_df.groupby(
     "Region", as_index=False
 )["Sales"].sum()
 
-fig = px.bar(
+fig_region = px.bar(
     region_sales,
     x="Region",
-    y="Sales",
-    text_auto='.2s'
+    y="Sales"
 )
 
-fig.update_layout(
+fig_region.update_traces(marker_color="#2563EB")
+fig_region.update_layout(
     height=240,
     margin=dict(l=10, r=10, t=10, b=10),
     xaxis_title="",
@@ -261,9 +253,9 @@ fig.update_layout(
     font=dict(size=10)
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig_region, use_container_width=True)
 
 
 # 13. Footer
 st.divider()
-st.caption("Superstore Analytics Portfolio Project | Built with Python, Pandas, Matplotlib, Plotly, and Streamlit.")
+st.caption("Superstore Analytics Portfolio Project | Built with Python, Pandas, Plotly, and Streamlit.")
