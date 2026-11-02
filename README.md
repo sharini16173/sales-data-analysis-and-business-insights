@@ -13,7 +13,6 @@ This project transforms raw retail transaction data into strategic business inte
 * `/data` - Contains the raw CSV input files (e.g., `Sample - Superstore.csv`).
 * `/notebooks` - Jupyter Notebooks detailing the exploratory data analysis (EDA) and pipeline logic.
 * `/outputs` - Generated assets, including visualization `.png` files, Excel workbooks, and the final PDF report.
-* `/scripts` - Python scripts designed to run the automated reporting pipeline.
 
 ## ⚙️ Analytical Workflow
 1. **Data Ingestion:** Loaded the raw dataset, handling character encoding (latin1) to ensure data integrity.
