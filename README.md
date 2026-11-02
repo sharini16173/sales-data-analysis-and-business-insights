@@ -8,19 +8,6 @@ Retail businesses often generate massive sales numbers, but high revenue can eas
 ## 🚀 Live Demo & Preview
 🌐 **Live App:** [View Live Streamlit Dashboard](https://sales-data-analysis-and-business-insights-5yjtsyxwqypgfaxl5hgx.streamlit.app/)
 
-## 📂 Project Structure
-```text
-Sales_Data_Analysis/
-│
-├── outputs/
-│   └── cleaned_sales.csv      # Cleaned and processed dataset
-├── images/
-│   └── dashboard_preview.png  # Screenshot for README preview
-├── app.py                     # Main Streamlit application script
-├── requirements.txt           # Required Python packages
-└── README.md                  # Project documentation
-
-
 ---
 
 ## 📈 Key Business Insights Discovered
@@ -29,14 +16,12 @@ Through exploratory data analysis, the project revealed critical business findin
 * **High Sales, Low Profit in Furniture:** The Furniture category brings in heavy revenue ($742K) but has a critically low profit margin (2.49%) compared to Technology (17.40%).
 * **Money-Losing Sub-Categories:** Tables (lost $17,725) and Bookcases (lost $3,472) are actively draining overall profits.
 * **Q4 Seasonality:** Customer demand spikes significantly toward the end of the year, peaking in September, November, and December.
-
 ---
 
 ## 💡 Actionable Recommendations
 * **Cap Discounts at 20%:** Establish a strict maximum discount limit to protect baseline profits.
 * **Audit Furniture Margins:** Investigate hidden fulfillment costs for Tables and Bookcases, or pivot focus toward high-margin Office Supplies.
 * **Optimize for Q4:** Secure inventory early and align marketing budgets with peak seasonal buying months.
-
 ---
 
 ## 🛠️ Dashboard Features & Tech Stack
@@ -64,8 +49,4 @@ pip install pandas matplotlib seaborn openpyxl
 
 # 3. Launch Jupyter Notebook to interact with the data
 jupyter notebook Superstore_Sales.ipynb
-
-
-
-
 
