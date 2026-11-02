@@ -3,11 +3,10 @@
 > **A data analytics portfolio project identifying profit leaks, optimizing discount strategies, and boosting retail margins using Python.**
 
 ---
-
 ## 📋 Executive Summary / Overview
 Retail businesses often generate massive sales numbers, but high revenue can easily hide areas where the company is actually losing money. This project analyzes four years of sales data from a national Superstore to uncover the root causes of profit erosion. Using Python (Pandas and Matplotlib), the analysis proves that aggressive discounting strategies and underperforming furniture products are actively hurting the bottom line. The resulting insights provide clear, data-driven recommendations to help management stop financial losses and maximize net profits.
 
-
+---
 ## 📂 Dataset Description
 * **Source:** Sample Superstore Dataset (Loaded from `Sample - Superstore.csv`)
 * **Size:** 9,994 rows × 21 columns
@@ -17,7 +16,7 @@ Retail businesses often generate massive sales numbers, but high revenue can eas
   * `Category` & `Sub-Category`: Product types (Furniture, Office Supplies, Technology).
   * `Sales`, `Quantity`, `Discount`, & `Profit`: The core financial metrics used to calculate margins and find money-losing orders.
 
-
+---
 ## 🛠️ Tools and Libraries Used
 * **Programming Language:** Python 3
 * **Data Manipulation & Cleaning:** Pandas, NumPy
@@ -26,7 +25,7 @@ Retail businesses often generate massive sales numbers, but high revenue can eas
 * **Export & Reporting:** Openpyxl (for exporting final insights to Excel)
 * **Version Control:** Git & GitHub
 
-
+---
 ## 🧹 Data Cleaning and Preparations
 Before searching for business trends, the raw data was cleaned and structured for accurate analysis:
 1. **Standardized Column Names:** Stripped extra whitespace from headers to ensure clean, error-free coding.
@@ -34,7 +33,7 @@ Before searching for business trends, the raw data was cleaned and structured fo
 3. **Feature Engineering:** Created new helpful columns like `Year`, `Month`, `Shipping Days`, and a `Profit Status` tag (categorizing every single order as either a "Profit" or a "Loss").
 4. **Data Quality Checks:** Confirmed there were no missing values or duplicated rows, ensuring the financial aggregates were 100% accurate.
 
-
+---
 ## 📊 Executive Insights
 After exploring the data, here are the most impactful discoveries:
 
@@ -43,7 +42,7 @@ After exploring the data, here are the most impactful discoveries:
 * **Specific Money-Losing Products:** Diving deeper into the categories reveals that two specific sub-categories—**Tables** (lost $17,725) and **Bookcases** (lost $3,472)—are actively draining the store's overall profits.
 * **End-of-Year Sales Rush:** Customer buying patterns show strong seasonality. Sales consistently spike in the last few months of the year, with September, November, and December bringing in the highest revenue.
 
-
+---
 ## 💡 Actionable Recommendations
 Based on the data, here are strategic solutions to optimize margins and stop profit leaks:
 
@@ -51,7 +50,7 @@ Based on the data, here are strategic solutions to optimize margins and stop pro
 * **Fix the Furniture Strategy:** Management needs to investigate the hidden costs (like shipping and storage) for Tables and Bookcases. If they cannot be made profitable, the store should consider dropping these items and focusing on high-margin office supplies instead.
 * **Prepare for the Q4 Holiday Season:** Since September through December are the busiest months, the company should secure inventory early and focus their marketing budgets entirely on these high-performing months to maximize revenue.
 
-
+---
 ## 🚀 How to View or Run the Project
 
 **👁️ To view the analysis (No installation required):**
