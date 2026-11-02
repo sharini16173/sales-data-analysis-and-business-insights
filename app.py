@@ -8,7 +8,7 @@ st.set_page_config(page_title="Superstore Sales Dashboard", layout="wide")
 # Load dataset safely
 @st.cache_data
 def load_data():
-    return pd.read_csv("cleaned_superstore.csv", encoding="latin1")
+    return pd.read_csv("outputs/cleaned_superstore.csv", encoding="latin1")
 
 df = load_data()
 
