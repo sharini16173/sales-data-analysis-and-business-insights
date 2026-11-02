@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 st.title("Superstore Sales Analysis Dashboard")
-st.write("Explore sales and profit performance by year.")
+st.write("Explore sales and profit performance by year and customer segment.")
 
 # 3. Load the dataset
 df = pd.read_csv("outputs/cleaned_sales.csv", encoding="latin1")
@@ -37,13 +37,22 @@ if df.empty:
     st.error("No data found between 2014 and 2017.")
     st.stop()
 
-# 4. Create sidebar filter (Year Slicer only)
+# 4. Create sidebar filters (Year & Customer Segment)
 st.sidebar.header("Dashboard Filters")
 
+# Year Slicer
 year_options = ["All Years", 2014, 2015, 2016, 2017]
 selected_year = st.sidebar.selectbox(
     "Select Year",
     year_options,
+    index=0
+)
+
+# Customer Segment Slicer
+segment_options = ["All Segments"] + sorted(df["Segment"].unique().tolist()) if "Segment" in df.columns else ["All Segments"]
+selected_segment = st.sidebar.selectbox(
+    "Select Customer Segment",
+    segment_options,
     index=0
 )
 
@@ -55,8 +64,13 @@ else:
     year_df = df[df["Order Date"].dt.year == selected_year].copy()
     display_title = f"Overall Performance - {selected_year}"
 
+# Apply Segment Filter
+if selected_segment != "All Segments":
+    year_df = year_df[year_df["Segment"] == selected_segment].copy()
+    display_title += f" [{selected_segment}]"
+
 if year_df.empty:
-    st.warning("No records found for the selected year.")
+    st.warning("No records found for the selected filters.")
     st.stop()
 
 # 5. Calculate the overall KPIs for the selected view
@@ -127,8 +141,6 @@ with col1:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(sales_change))
-    else:
-        st.caption("All-time aggregate (2014-2017)")
 
 # KPI 2: Profit
 with col2:
@@ -143,8 +155,6 @@ with col2:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(profit_change))
-    else:
-        st.caption("All-time aggregate (2014-2017)")
 
 # KPI 3: Orders
 with col3:
@@ -159,8 +169,6 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(orders_change))
-    else:
-        st.caption("All-time aggregate (2014-2017)")
 
 # KPI 4: Customers
 with col4:
@@ -175,8 +183,6 @@ with col4:
     st.markdown("</div>", unsafe_allow_html=True)
     if selected_year != "All Years":
         st.caption(change_text(customers_change))
-    else:
-        st.caption("All-time aggregate (2014-2017)")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
